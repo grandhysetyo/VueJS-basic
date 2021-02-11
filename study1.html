@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .active {
+            background: salmon;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <img src="https://vuejs.org/images/logo.png" width="100">
+            <h1>{{ dataluar.isactive ? dataluar.nama_barang : 'Gagal' }}</h1>
+            <p>Nama Lengkap : {{ namaLengkap }}</p>
+            <p>Bilangan nya adalah {{cekBilangan}}</p>
+            <p>{{cekBilangan2}}</p>
+            <p>Memanggil function {{getName()}}</p>
+            <p>Progressive Javascrtipt Framework</p>
+
+            <p v-once>{{}}</p>
+            <!-- Cetak Data -->
+            <p v-text="name"></p>
+            <p v-text="name.toUpperCase()"></p>
+            <p v-text="dataluar.harga*3"></p>
+            <!-- Cetak Data HTML-->
+            <p v-html="link"></p>
+            <!-- Cetak Attribute -->
+            <img v-bind:src="gambar1" width="100"/>
+            <!-- atau -->
+            <img :src="gambar2" width="100"/>
+
+            <!-- Event (v-on:blblabla)-->
+            <p>
+                <p v-text="bilangan"></p>
+                <button v-on:click="bilangan++">Tekan V.1</button>
+                <button v-on:click="handleClick()">Tekan V.2</button>
+                <button @click="handleClick()">Tekan V.3</button>
+            </p>
+
+            <!-- Class Binding (v-bind:class)-->
+            <button v-bind:class="{active: menu === 'home'}"  v-on:click="menu = 'home'">Home</button>
+            <button v-bind:class="{active: menu === 'about'}" v-on:click="menu = 'about'">About</button>
+            <button v-bind:class="{active: menu === 'blog'}"  v-on:click="menu = 'blog'">Blog</button>
+            
+            <!-- Two Way Binding (v-model) -->
+            <input type="text" v-model="name" />
+            <p>{{ kelas }}</p>
+            <div>
+                <label for=""><input type="checkbox" v-model="kelas" value="React"> React</label>
+                <label for=""><input type="checkbox" v-model="kelas" value="Vue"> Vue</label>
+                <label for=""><input type="checkbox" v-model="kelas" value="Angular"> Angular</label>
+            </div>
+
+            <!-- Perulangan -->
+            <ul>
+                <li v-for="k in listNama">{{ k }}</li>
+            </ul>
+            <!-- Atau -->
+            <ul>
+                <li v-for="k in kelas" v-text='k'></li>
+            </ul>
+            <!-- Atau -->
+            <ul>
+                <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
+            </ul>
+            <!-- Atau -->
+            <h3>Perulangan</h3>
+            <ul>
+                <li v-for="x in 5">{{x}}</li>
+            </ul>
+            <h3>Mencari Bilangan Genap 1-5 </h3>
+            <ul>
+                <li v-for="x in cariBilanganGenap(number)">{{x}}</li>
+            </ul>
+            <!-- Kondisi -->
+            <h3>Kondisi </h3>
+            <ul v-if="listNama.length > 1">
+                <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
+            </ul>
+            <!-- <liv v-else>Kelas Belum tersedia</li> -->
+            <h3>Kondisi 2 </h3>    
+            <template v-show="listNama.length > 1">
+                <ul>
+                    <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
+                </ul>
+            </template>
+            <h3>Kondisi 3 </h3>    
+            <template v-if="listNama.length > 1">
+                <ul>
+                    <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
+                </ul>
+            </template>
+        </header>
+    
+        <footer id="footer">
+            <p>copyright 2020</p>
+        </footer>    
+    </div>
+<!-- production version, optimized for size and speed -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+<script>
+    const dataluar = {
+        nama_barang: 'Pisau',
+        harga: 2000,
+        isactive: true,
+        qty: 1
+    }
+    const app = new Vue({
+        el: '#app',
+        data: {
+            name: 'Grandhys',
+            namaDepan: 'Setyo',
+            namaBelakang: 'Utomo',
+            bilangan:3,
+            link: '<a href="#" /> LINK </a>',
+            message: "dicobain isi pesan",
+            dataluar,
+            gambar1: 'image/img1.jpg',
+            gambar2: 'image/img2.jpg',
+            menu: 'about',
+            kelas: [],
+            listNama: ['Aku', 'Suka', 'So Nice'],
+            number: [1, 2, 3, 4, 5]
+            
+        },
+        methods: {
+            getName: function() {
+                return 'Hello '+  this.name
+            },
+            changeName: function (newName) {
+                this.name = newName
+                return this.getName()
+            },
+            handleClick: function() {
+                this.bilangan++
+                this.gambar1 = 'image/img2.jpg'
+            }, 
+            cariBilanganGenap: (data) => {
+                return data.filter( (angka) =>{
+                    return angka%2 == 0
+                })
+            }
+            
+        },
+        computed:{
+            totalBayar: function () {
+                return this.dataluar.qty * 2000
+                
+            },
+            namaLengkap: function() {
+                return this.namaDepan +' '+ this.namaBelakang
+            },
+            cekBilangan: function () {
+                let hasil
+                if(this.bilangan%2===0) {
+                    hasil = 'Genap'
+                } else {
+                    hasil = 'Ganjil'
+                }
+                return hasil                
+            },
+            cekBilangan2: function () {
+                return this.bilangan%2===0 ? 'Genap' : 'Ganjil'
+            }
+        }
+    })
+</script>
+</body>
+</html>
