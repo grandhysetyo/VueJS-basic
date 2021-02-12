@@ -70,6 +70,14 @@
             <ul>
                 <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
             </ul>
+            <!-- Atau Object -->
+            <ul>
+                <li v-for="value of blog">{{value}}</li>
+            </ul>
+            <!-- Atau Object -->
+            <ul>
+                <li v-for="(value, name, index) in blog">{{index}} - {{name}} - {{value}}</li>
+            </ul>
             <!-- Atau -->
             <h3>Perulangan</h3>
             <ul>
@@ -97,6 +105,41 @@
                     <li v-for="(item, i) of listNama">{{i}} - {{item}}</li>
                 </ul>
             </template>
+            <!-- Event Handling -->
+            <div>
+                <a href="#" v-bind:class="{active: menu === 'home'}"  v-on:click="gantiMenu2('home',$event)">Home</a>
+                <a href="#" v-bind:class="{active: menu === 'about'}" v-on:click="gantiMenu2('about',$event)">About</a>
+                <a href="#" v-bind:class="{active: menu === 'blog'}"  v-on:click="gantiMenu2('blog',$event)">Blog</a>
+            </div>
+            <!-- Event handling dengan event modifier -->
+            <!-- 
+                .prevent
+                .stop
+                .capture
+                .once
+                .passive
+             -->
+            <p>
+                <a href="#" v-bind:class="{active: menu === 'home'}"  v-on:click.prevent="gantiMenu('home')">Home</a>
+                <a href="#" v-bind:class="{active: menu === 'about'}" v-on:click.prevent="gantiMenu('about')">About</a>
+                <a href="#" v-bind:class="{active: menu === 'blog'}"  v-on:click.prevent="gantiMenu('blog')">Blog</a>
+            </p>
+            <!-- Key Modifier -->
+            <h3>Key Modifier</h3>
+            <p>
+                <input type="text" v-on:keyup.enter="submit" />
+            </p>
+            <ul>
+                <li v-for="item of kelas">{{item}}</li>
+            </ul>
+            <!-- Form Binding -->
+            <h3>Form Binding</h3>
+            <p>
+                <input type="text" v-on:keyup.enter="submit_b" v-model="kelasbaru" />
+            </p>
+            <ul>
+                <li v-for="item of kelas">{{item}}</li>
+            </ul>
         </header>
     
         <footer id="footer">
@@ -124,10 +167,16 @@
             dataluar,
             gambar1: 'image/img1.jpg',
             gambar2: 'image/img2.jpg',
-            menu: 'about',
+            menu: '',
             kelas: [],
             listNama: ['Aku', 'Suka', 'So Nice'],
-            number: [1, 2, 3, 4, 5]
+            number: [1, 2, 3, 4, 5],
+            kelasbaru: '',
+            blog: {
+                title: 'Belajar Vue JS',
+                date: '20-12-21',
+                desc: 'Lorem ipsum dolor sit amet'
+            }
             
         },
         methods: {
@@ -146,8 +195,25 @@
                 return data.filter( (angka) =>{
                     return angka%2 == 0
                 })
+            },
+            gantiMenu: function(data) {                
+                this.menu = data
+            },
+            gantiMenu2: function(data,event) {    
+                console.log(event)            
+                event.preventDefault()
+                this.menu = data
+            },
+            submit: function(event) {
+                let txt = event.target.value
+                console.log(txt)
+                this.kelas.push(txt)
+                event.target.value = ''
+            },
+            submit_b: function() {               
+                this.kelas.push(this.kelasbaru)
+                this.kelasbaru = ''
             }
-            
         },
         computed:{
             totalBayar: function () {
