@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .active {
+            background: salmon;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header-component nama='Ini Props' gambar='https://vuejs.org/images/logo.png'></header-component>
+        <main>
+            <h3>KELAS 1</h3>
+            <kelas></kelas>
+            <h3>KELAS 2</h3>
+            <kelas2 v-bind:items='kelas' v-bind:input='kelasbaru'></kelas2>
+            <home></home>
+        </main>
+        <footer-component></footer-component>
+    </div>
+<!-- production version, optimized for size and speed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script> -->
+<!-- development version, for prototyping or learning purposes -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script> 
+    // Inisiasi Component Global
+    Vue.component('header-component',{
+        props: ['nama','gambar'],
+        template: `
+        <header>
+            <h3> {{message}} </h3>
+            <img :src="gambar" width="100">            
+            <p v-text="message2"></p>   
+            <p> {{ nama }} </p>
+        </header>
+        `,
+        data: function(){
+            return {
+                message: "This is Component Header",
+                message2: "Progressive Javascrtipt Framework"
+            }
+        }
+
+    })
+    Vue.component('footer-component',{
+        template: `
+        <footer id="footer">
+            <p>copyright 2020</p>
+        </footer>    
+        `
+    })
+    Vue.component('kelas',{        
+        template: `
+            <div>
+            <h3>Tambah Kelas</h3>
+            <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submit" v-model="kelasbaru">
+
+            <h3>Daftar Kelas</h3>
+            <template>
+                <ul>
+                    <li v-for="(item, idx) of kelas">{{idx}} - {{item}} </li>
+                </ul>
+            </template>
+            </div>
+        `,
+        data: function() {
+            return {
+                kelas: ['Golang'],
+                kelasbaru: ''
+            }
+        },
+        methods: {
+            submit: function() {               
+                this.kelas.push(this.kelasbaru)
+                this.kelasbaru = ''
+            }
+        }
+    })
+    // Komponen binding data props from parent app
+    Vue.component( 'kelas2',{
+        props: ['items','input'],
+        template: `
+            <div>
+            <h3>Tambah Kelas</h3>
+            <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submit" v-model="input" >
+
+            <h3>Daftar Kelas</h3>
+            <template>
+                <ul>
+                    <li v-for="(item, idx) of items">{{idx}} - {{item}}</li>
+                </ul>
+            </template>
+            </div>
+        `,
+        data: function() {
+            return {                
+            }
+        },
+        methods: {
+            submit: function() {               
+                this.input.push(this.input)
+                this.input = ''
+            }
+        }
+    })
+    // Inisiasi Component Local
+    const Home = {
+        template: `
+        <h3> Ini komponen HOME </h3>
+        `
+    }
+
+    const app = new Vue({
+        el: '#app',
+        components: {
+            'home': Home
+        },
+        data: {
+            kelas: ['Golang'],
+            kelasbaru: ''
+        },
+        methods: {            
+            
+        },
+        computed:{            
+        }
+    })
+</script>
+</body>
+</html>
