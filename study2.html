@@ -20,10 +20,13 @@
             <h3>KELAS 1</h3>
             <kelas></kelas>
             <h3>KELAS 2</h3>
-            <kelas2 v-bind:items='kelas' v-bind:input='kelasbaru'></kelas2>
+            <kelas2 v-bind:items='kelas' v-on:submit='submitkelas' v-on:hapus='hapuskelas'></kelas2>
             <home></home>
         </main>
-        <footer-component></footer-component>
+        <footer-component>
+            <!-- SLOT -->
+            EROR!!, Blablabla
+        </footer-component>
     </div>
 <!-- production version, optimized for size and speed -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script> -->
@@ -53,9 +56,11 @@
         template: `
         <footer id="footer">
             <p>copyright 2020</p>
+            <slot></slot>
         </footer>    
         `
     })
+    // Binding data kelas and submit data using emit
     Vue.component('kelas',{        
         template: `
             <div>
@@ -84,17 +89,18 @@
         }
     })
     // Komponen binding data props from parent app
+    // Komponen binding data component to parent app using emit
     Vue.component( 'kelas2',{
         props: ['items','input'],
         template: `
             <div>
             <h3>Tambah Kelas</h3>
-            <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submit" v-model="input" >
+            <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="$emit('submit', $event)"  >
 
             <h3>Daftar Kelas</h3>
             <template>
                 <ul>
-                    <li v-for="(item, idx) of items">{{idx}} - {{item}}</li>
+                    <li v-for="(item, idx) of items">{{idx}} - {{item}} <a href="" v-on:click.prevent="$emit('hapus', idx)">X</a></li>
                 </ul>
             </template>
             </div>
@@ -104,10 +110,7 @@
             }
         },
         methods: {
-            submit: function() {               
-                this.input.push(this.input)
-                this.input = ''
-            }
+            
         }
     })
     // Inisiasi Component Local
@@ -123,11 +126,16 @@
             'home': Home
         },
         data: {
-            kelas: ['Golang'],
-            kelasbaru: ''
+            kelas: ['Golang','Python'],            
         },
         methods: {            
-            
+            hapuskelas: function(idx){
+                this.kelas.splice(idx,1)
+            },
+            submitkelas: function(event) {               
+                this.kelas.push(event.target.value)
+                event.target.value = ''
+            }
         },
         computed:{            
         }
