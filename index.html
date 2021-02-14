@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .active {
+            background: salmon;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header-component nama='Ini Props' gambar='https://vuejs.org/images/logo.png'></header-component>
+        <nav>
+            <router-link to="/">Home</router-link>
+            <router-link to="/about">About</router-link>
+            <router-link to="/kelas">Kelas</router-link>
+        </nav>
+        <main>
+            <!-- <h3>KELAS 1</h3>
+            <kelas></kelas>
+            <h3>KELAS 2</h3>
+            <kelas2 v-bind:items='kelas' v-on:submit='submitkelas' v-on:hapus='hapuskelas'></kelas2>
+            <home></home> -->
+            <router-view v-bind:items='kelas' v-on:submitkelas='submitkelas' v-on:hapus='hapuskelas'></router-view>
+        </main>
+        <footer-component>
+            <!-- SLOT -->
+            EROR!!, Blablabla
+        </footer-component>
+    </div>
+<!-- production version, optimized for size and speed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script> -->
+<!-- development version, for prototyping or learning purposes -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<!-- Vue Route -->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+
+<script> 
+    // Inisiasi Component Global
+    Vue.component('header-component',{
+        props: ['nama','gambar'],
+        template: `
+        <header>
+            <h3> {{message}} </h3>
+            <img :src="gambar" width="100">            
+            <p v-text="message2"></p>   
+            <p> {{ nama }} </p>
+        </header>
+        `,
+        data: function(){
+            return {
+                message: "This is Component Header",
+                message2: "Progressive Javascrtipt Framework"
+            }
+        }
+
+    })
+    Vue.component('footer-component',{
+        template: `
+        <footer id="footer">
+            <p>copyright 2020</p>
+            <slot></slot>
+        </footer>    
+        `
+    })
+    
+    // Inisiasi Component Local
+    const Home = {
+        template: `
+        <h3> Ini komponen HOME </h3>
+        `
+    }
+
+    const About = {
+        template: `
+        <h3> Ini komponen About </h3>
+        `
+    }
+
+    // Komponen binding data props from parent app
+    // Komponen binding data component to parent app using emit
+    const Kelas = {
+        props: ['items','input'],
+        template: `
+            <div>
+                <h3>Tambah Kelas</h3>
+                <form v-on:submit.prevent="add">
+                    <div class="input-group">
+                        <label> Nama : </label>
+                        <br>
+                        <input type="text" v-model="kelas.title" placeholder="Nama Kelas" />
+                    </div>                    
+                    <div class="input-group">
+                        <label> Deskripsi : </label>
+                        <br>
+                        <textarea v-model="kelas.desc"> </textarea>
+                    </div>
+                    <div class="input-group">
+                        <label> Image : </label>
+                        <br>
+                        <input type="file" v-on:change="upload" ref="gambar"/>
+                    </div>
+                    <div class="input-group">
+                        <label> Previews : </label>
+                        <br>
+                        <img v-bind:src="previewimg" v-if="previewimg"  width="100" />
+                    </div>                    
+                        <button type="submit"> Submit </button>
+                    
+                </form>
+
+                <h3>Daftar Kelas</h3>
+                <template>
+                    <ul>
+                        <li v-for="(item, idx) of items">{{idx}} - {{item.title}} - {{item.desc}} <a href="" v-on:click.prevent="$emit('hapus', item.id)">X</a></li>
+                    </ul>
+                </template>
+            </div>
+        `,
+        data: function() {
+            return {   
+                kelas: {
+                    title: '',
+                    desc: '',
+                    image: ''
+                },
+                previewimg: ''
+
+            }
+        },
+        methods: {
+            add: function(){               
+                const data = {
+                    id: uuidv4(),
+                    title: this.kelas.title,
+                    desc: this.kelas.desc,
+                    pic: this.kelas.image
+                }
+                this.$emit('submitkelas', data)
+
+                this.kelas.title = ''
+                this.kelas.desc = ''   
+                this.previewimg = '' 
+                this.$refs.gambar.value = ""         
+            },
+            upload: function(event) {
+                const namagambar = event.target.files[0].name
+                this.kelas.image = namagambar
+                this.previewimg = URL.createObjectURL(event.target.files[0])
+            }
+        }
+    }
+
+    const routes = [
+        { path: '/', component: Home},
+        { path: '/about', component: About},
+        { path: '/kelas', component: Kelas}
+    ]
+
+    const router = new VueRouter({
+        routes, // short for `routes: routes`
+        mode: 'history' // digunakan untuk menghilangkan mode route yg awalnya localhost#/about => localhost/about
+    })
+
+    const app = new Vue({
+        el: '#app',
+        router,
+        data: {
+            kelas: [
+                { id:1, title:'Vue Js', desc:'Vue Js is lorem ipsum dolor sit amet', pic:'image/img1.jpg'},
+                { id:2, title:'Python', desc:'Python is lorem ipsum dolor sit amet', pic:'image/img2.jpg'},
+                { id:3, title:'Node Js', desc:'Node Js is lorem ipsum dolor sit amet', pic:'image/img1.jpg'}
+            ],            
+        },
+        methods: {            
+            hapuskelas: function(id){
+                this.kelas = this.kelas.filter(a => a.id != id)
+            },
+            submitkelas: function(data) { 
+                console.log(data)              
+                this.kelas.push(data)                
+            }
+        },
+        computed:{          
+
+        }
+    })
+</script>
+</body>
+</html>
