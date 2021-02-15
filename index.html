@@ -113,7 +113,7 @@
                         <img v-bind:src="previewimg" v-if="previewimg"  width="100" />
                     </div>                    
                         <button type="submit"> Submit </button>
-                    
+                    <p v-if="error.judul" v-text="error.judul" ></p>
                 </form>
 
                 <h3>Daftar Kelas</h3>
@@ -131,24 +131,40 @@
                     desc: '',
                     image: ''
                 },
-                previewimg: ''
-
+                previewimg: '',
+                error: {
+                    judul: '',
+                    deskripsi:'',
+                }
             }
         },
         methods: {
-            add: function(){               
-                const data = {
-                    id: uuidv4(),
-                    title: this.kelas.title,
-                    desc: this.kelas.desc,
-                    pic: this.kelas.image
+            add: function(){        
+                this.error.judul = ''
+                if(this.kelas.title=='' && this.kelas.desc=='')     {
+                    this.error.judul = 'Nama Kelas & Deskripsi tidak boleh kosong'
                 }
-                this.$emit('submitkelas', data)
+                else if(this.kelas.title==''){
+                    this.error.judul = 'Nama Kelas tidak boleh kosong'
+                }
+                else if(this.kelas.desc==''){
+                    this.error.judul = 'Deskripsi tidak boleh kosong'
+                }
+                else {
+                    const data = {
+                        id: uuidv4(),
+                        title: this.kelas.title,
+                        desc: this.kelas.desc,
+                        pic: this.kelas.image
+                    }
+                    this.$emit('submitkelas', data)
 
-                this.kelas.title = ''
-                this.kelas.desc = ''   
-                this.previewimg = '' 
-                this.$refs.gambar.value = ""         
+                    this.kelas.title = ''
+                    this.kelas.desc = ''   
+                    this.previewimg = '' 
+                    this.$refs.gambar.value = ""         
+                }
+                
             },
             upload: function(event) {
                 const namagambar = event.target.files[0].name
@@ -157,11 +173,16 @@
             }
         }
     }
-
+    const NotFound = {
+        template: `
+        <h3> Halaman Tidak ditemukan!! </h3>
+        `
+    }
     const routes = [
         { path: '/', component: Home},
         { path: '/about', component: About},
-        { path: '/kelas', component: Kelas}
+        { path: '/kelas', component: Kelas},
+        { path: '*', component: NotFound}
     ]
 
     const router = new VueRouter({
